@@ -1,0 +1,40 @@
+<svg width="920" height="260" viewBox="0 0 920 260" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .word-main {
+        font-family: "Inter", "DM Sans", "Segoe UI", sans-serif;
+        font-size: 96px;
+        font-weight: 600;
+        letter-spacing: -2px;
+        fill: #201b42;
+      }
+      .word-accent {
+        font-family: "Inter", "DM Sans", "Segoe UI", sans-serif;
+        font-size: 96px;
+        font-weight: 500;
+        letter-spacing: -2px;
+        fill: #5b4fcf;
+      }
+    </style>
+  </defs>
+
+  <g transform="translate(30,20)">
+    <circle cx="110" cy="110" r="82" fill="#f2efff"/>
+    <circle cx="110" cy="110" r="72" fill="none" stroke="#d7d1ff" stroke-width="2"/>
+
+    <path d="M68 110 Q88 78 110 110 Q132 142 152 110" fill="none" stroke="#5b4fcf" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M70 78 Q88 52 110 74 Q132 96 150 72" fill="none" stroke="#2d2358" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M70 142 Q88 168 110 146 Q132 124 150 148" fill="none" stroke="#2d2358" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <circle cx="68" cy="110" r="7" fill="#5b4fcf"/>
+    <circle cx="110" cy="110" r="8" fill="#5b4fcf"/>
+    <circle cx="152" cy="110" r="7" fill="#5b4fcf"/>
+    <circle cx="70" cy="78" r="5" fill="#8f86dd"/>
+    <circle cx="150" cy="72" r="5" fill="#8f86dd"/>
+    <circle cx="70" cy="142" r="5" fill="#8f86dd"/>
+    <circle cx="150" cy="148" r="5" fill="#8f86dd"/>
+  </g>
+
+  <text x="245" y="146" class="word-main">Mind</text>
+  <text x="455" y="146" class="word-accent">Link</text>
+</svg>

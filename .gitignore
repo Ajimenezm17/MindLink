@@ -1,0 +1,30 @@
+# Secretos y entorno local
+.env
+**/.env
+!.env.example
+!**/.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+*.sqlite3
+
+# Node / frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+frontend/test-results/
+playwright-report/
+
+# IDE y sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# Archivos locales sueltos
+*.zip
