@@ -1,11 +1,20 @@
 # MindLink
 
-Aplicación web de salud mental (TFG): citas, seguimiento emocional, chat y panel de administración.
+**MindLink** es una aplicación web orientada al **seguimiento emocional** y la **comunicación entre pacientes y profesionales** de la salud mental (TFG).
 
-## Estructura
+El sistema permite:
 
-- `Backend/` — API Django + PostgreSQL (Docker)
-- `frontend/` — SPA Vite + TypeScript + Tailwind
+- Evaluación inicial y cuestionarios
+- Registro del estado emocional diario
+- Gestión de citas y agenda del profesional
+- Chat entre paciente y profesional
+- Asistente de bienestar (chatbot)
+- Panel de administración
+
+## Estructura del repositorio
+
+- `Backend/` — API **Django** + **PostgreSQL** (Docker)
+- `frontend/` — SPA **Vite** + TypeScript + Tailwind
 
 ## Arranque local
 
@@ -31,10 +40,12 @@ App: http://localhost:5173
 
 ## Variables sensibles
 
-No subas `Backend/.env` al repositorio. Usa `.env.example` como plantilla.
+No subas `Backend/.env` al repositorio. Usa `.env.example` como plantilla (incluye `GROQ_API_KEY` si usas el asistente con Groq).
 
-## Despliegue
+## Despliegue sugerido (gratis)
 
-Frontend (Vercel): build `npm run build`, variable `VITE_API_BASE_URL` apuntando a tu API.
-
-Backend (Render/Railway): Docker desde `Backend/`, Postgres externo (Neon) o plugin del proveedor.
+| Pieza | Servicio |
+|-------|----------|
+| Frontend | Vercel (`npm run build`, `VITE_API_BASE_URL`) |
+| Backend | Render (Docker en `Backend/`) |
+| Base de datos | Neon (PostgreSQL) |
