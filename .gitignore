@@ -28,3 +28,6 @@ Thumbs.db
 
 # Archivos locales sueltos
 *.zip
+Backend/mindlink_dump.sql
+Backend/neon_import.sql
+Backend/neon_import_clean.sql
