@@ -1,8 +1,11 @@
 # Secretos y entorno local
 .env
+.env.local
 **/.env
+**/.env.local
 !.env.example
 !**/.env.example
+!**/env.render.template
 
 # Python
 __pycache__/
