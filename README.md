@@ -49,3 +49,5 @@ No subas `Backend/.env` al repositorio. Usa `.env.example` como plantilla (inclu
 | Frontend | Vercel (`npm run build`, `VITE_API_BASE_URL`) |
 | Backend | Render (Docker en `Backend/`) |
 | Base de datos | Neon (PostgreSQL) |
+
+Despliegue Vercel: commits de la cuenta GitHub **Ajimenezm17** (sin co-autores externos).
