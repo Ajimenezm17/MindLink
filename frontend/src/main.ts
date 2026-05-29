@@ -32,6 +32,23 @@ async function parseApiJson(response: Response): Promise<Record<string, unknown>
     throw new Error('Respuesta del servidor no válida')
   }
 }
+
+function apiDetail(body: Record<string, unknown>, fallback: string): string {
+  const detail = body.detail
+  return typeof detail === 'string' ? detail : fallback
+}
+
+function apiNumber(body: Record<string, unknown>, key: string): number {
+  const value = body[key]
+  if (typeof value === 'number') return value
+  if (typeof value === 'string') return Number(value) || 0
+  return 0
+}
+
+function apiArray<T>(body: Record<string, unknown>, key: string): T[] {
+  const value = body[key]
+  return Array.isArray(value) ? (value as T[]) : []
+}
 const BRAND_LOGO_SRC = '/mindlink_logo.svg'
 const BRAND_LOGO_SM = `<img src="${BRAND_LOGO_SRC}" alt="MindLink" class="h-9 w-auto" />`
 const BRAND_LOGO_HERO = `<img src="${BRAND_LOGO_SRC}" alt="MindLink" class="h-12 w-auto" />`
@@ -285,30 +302,30 @@ async function renderAdminPanel(): Promise<void> {
       headers: { Authorization: `Bearer ${token}` },
     })
     const body = await parseApiJson(response)
-    if (!response.ok) throw new Error(body.detail || 'No se pudo cargar el resumen')
-    setText('kpi-total', body.total_usuarios ?? 0)
-    setText('kpi-pacientes', body.total_pacientes ?? 0)
-    setText('kpi-profesionales', body.total_profesionales ?? 0)
-    setText('kpi-admins', body.total_administradores ?? 0)
-    setText('kpi-activos', body.usuarios_activos ?? 0)
-    setText('kpi-inactivos', body.usuarios_inactivos ?? 0)
-    setText('kpi-citas', body.total_citas ?? 0)
-    setText('kpi-citas-prox', body.citas_proximas_7d ?? 0)
-    setText('kpi-citas-pend', body.citas_pendientes ?? 0)
-    setText('kpi-citas-conf', body.citas_confirmadas ?? 0)
-    setText('kpi-citas-canc', body.citas_canceladas ?? 0)
-    setText('kpi-emociones', body.registros_emocionales ?? 0)
+    if (!response.ok) throw new Error(apiDetail(body, 'No se pudo cargar el resumen'))
+    setText('kpi-total', apiNumber(body, 'total_usuarios'))
+    setText('kpi-pacientes', apiNumber(body, 'total_pacientes'))
+    setText('kpi-profesionales', apiNumber(body, 'total_profesionales'))
+    setText('kpi-admins', apiNumber(body, 'total_administradores'))
+    setText('kpi-activos', apiNumber(body, 'usuarios_activos'))
+    setText('kpi-inactivos', apiNumber(body, 'usuarios_inactivos'))
+    setText('kpi-citas', apiNumber(body, 'total_citas'))
+    setText('kpi-citas-prox', apiNumber(body, 'citas_proximas_7d'))
+    setText('kpi-citas-pend', apiNumber(body, 'citas_pendientes'))
+    setText('kpi-citas-conf', apiNumber(body, 'citas_confirmadas'))
+    setText('kpi-citas-canc', apiNumber(body, 'citas_canceladas'))
+    setText('kpi-emociones', apiNumber(body, 'registros_emocionales'))
 
-    const totalCitas = Number(body.total_citas) || 0
+    const totalCitas = apiNumber(body, 'total_citas')
     const setBar = (id: string, value: number) => {
       const bar = document.querySelector<HTMLElement>(`#${id}`)
       if (!bar) return
       const pct = totalCitas > 0 ? Math.min(100, Math.round((value / totalCitas) * 100)) : 0
       bar.style.width = `${pct}%`
     }
-    setBar('bar-citas-pend', Number(body.citas_pendientes) || 0)
-    setBar('bar-citas-conf', Number(body.citas_confirmadas) || 0)
-    setBar('bar-citas-canc', Number(body.citas_canceladas) || 0)
+    setBar('bar-citas-pend', apiNumber(body, 'citas_pendientes'))
+    setBar('bar-citas-conf', apiNumber(body, 'citas_confirmadas'))
+    setBar('bar-citas-canc', apiNumber(body, 'citas_canceladas'))
 
     const updatedAt = document.querySelector<HTMLElement>('#admin-updated-at')
     if (updatedAt) {
@@ -317,7 +334,7 @@ async function renderAdminPanel(): Promise<void> {
 
     const citasList = document.querySelector<HTMLElement>('#admin-recent-citas')
     if (citasList) {
-      const citas = body.ultimas_citas || []
+      const citas = apiArray<Record<string, string>>(body, 'ultimas_citas')
       citasList.innerHTML = citas.length
         ? citas
             .map((c: Record<string, string>) => {
@@ -338,13 +355,10 @@ async function renderAdminPanel(): Promise<void> {
 
     const usersList = document.querySelector<HTMLElement>('#admin-recent-users')
     if (usersList) {
-      const users = body.ultimos_usuarios || []
+      const users = apiArray<Record<string, string | boolean>>(body, 'ultimos_usuarios')
       usersList.innerHTML = users.length
         ? users
             .map((u: Record<string, string | boolean>) => {
-              const fecha = u.fecha_registro
-                ? new Date(String(u.fecha_registro)).toLocaleDateString('es-ES')
-                : '-'
               return `<li class="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 px-2 py-1.5">
                 <div>
                   <p class="font-medium text-slate-800">${u.nombre}</p>
@@ -368,9 +382,9 @@ async function renderAdminPanel(): Promise<void> {
       headers: { Authorization: `Bearer ${token}` },
     })
     const body = await parseApiJson(response)
-    if (!response.ok) throw new Error(body.detail || 'No se pudo cargar usuarios')
+    if (!response.ok) throw new Error(apiDetail(body, 'No se pudo cargar usuarios'))
     if (!usersBody) return
-    usersBody.innerHTML = (body.usuarios || [])
+    usersBody.innerHTML = apiArray<Record<string, string | number | boolean | null>>(body, 'usuarios')
       .map(
         (u: Record<string, string | number | boolean | null>) => `
           <tr class="border-b border-slate-100 transition hover:bg-violet-50/40">
@@ -774,7 +788,6 @@ async function renderPatientPanel(): Promise<void> {
   }
   const todayMidnight = () => new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())
 
-  let currentPatientId = 0
   let currentConversationId = 0
   let patientConversations: Array<Record<string, string | number>> = []
   let professionalScope: 'my' | 'new' = 'my'
@@ -1063,7 +1076,6 @@ async function renderPatientPanel(): Promise<void> {
     const profRes = await fetch(`${API_BASE_URL}/profesionales/`, { headers: { Authorization: `Bearer ${token}` } })
     const profBody = await profRes.json()
     allProfessionals = profBody.profesionales || []
-    currentPatientId = Number(me.id || 0)
     ;(document.querySelector<HTMLInputElement>('#profile-nombre') as HTMLInputElement | null)!.value = String(me.nombre || '')
     ;(document.querySelector<HTMLInputElement>('#profile-telefono') as HTMLInputElement | null)!.value = String(me.telefono || '')
     ;(document.querySelector<HTMLInputElement>('#profile-ciudad') as HTMLInputElement | null)!.value = String(me.ciudad_residencia || '')
